@@ -1,0 +1,63 @@
+      *================================================================
+      * Tests del inventario COBOL -- distribuidora.
+      * Framework: cobol-check (Open Mainframe Project).
+      *
+      *   - Funciona con GnuCOBOL.
+      *   - Extension de VS Code: "COBOL Check".
+      *   - Los casos se escriben en este DSL tipo COBOL (fichero .cut).
+      *
+      * cobol-check funciona como precompilador: mezcla el programa bajo
+      * prueba (inventario.cob) con estas pruebas y genera un ejecutable
+      * con los tests embebidos. Se lanza con:
+      *     cobol-check -p inventario
+      *
+      * NOTA DIDACTICA (M8): el inventario original es interactivo
+      * (ACCEPT/DISPLAY) y lee de fichero. Para testearlo bien hay que
+      * MOCKEAR esas dependencias -- o, mejor, extraer la logica pura a
+      * parrafos sin E/S. "Hacer el codigo testeable" es el primer paso
+      * de caracterizar legacy. Aqui se muestra el patron con mocks.
+      *================================================================
+
+       TestSuite "Inventario - busqueda por codigo de producto"
+
+      *----------------------------------------------------------------
+      * El codigo de producto tiene 6 caracteres; las 2 primeras letras
+      * son la categoria. Estos tests congelan ese comportamiento (es
+      * una regla de negocio que vive en la estructura del dato, no
+      * documentada en ningun otro sitio: el codigo viejo ES la spec).
+      *----------------------------------------------------------------
+
+       TestCase "Busca un producto existente y lo encuentra"
+      *    Mockeamos la lectura del fichero para devolver un registro
+      *    conocido sin depender de inventario.dat.
+           MOCK FICHERO-INV
+               MOVE "HW0023" TO RI-CODIGO
+               MOVE "Tornillo M6x20" TO RI-DESCRIPCION
+               MOVE 500 TO RI-STOCK
+               MOVE 0.05 TO RI-PRECIO
+               MOVE 'N' TO WS-EOF
+           END-MOCK
+           MOVE "HW0023" TO WS-CODIGO
+           PERFORM BUSCAR-PRODUCTO
+           Expect WS-ENCONTRADO to be "S"
+
+       TestCase "Busca un codigo inexistente y no lo encuentra"
+           MOCK FICHERO-INV
+               MOVE 'S' TO WS-EOF
+           END-MOCK
+           MOVE "ZZ9999" TO WS-CODIGO
+           PERFORM BUSCAR-PRODUCTO
+           Expect WS-ENCONTRADO to be "N"
+
+
+       TestSuite "Inventario - estructura del codigo de producto"
+
+       TestCase "Las dos primeras letras son la categoria HW"
+           MOVE "HW0023" TO WS-CODIGO
+           MOVE WS-CODIGO(1:2) TO WS-CATEGORIA
+           Expect WS-CATEGORIA to be "HW"
+
+       TestCase "Las dos primeras letras son la categoria EL"
+           MOVE "EL0105" TO WS-CODIGO
+           MOVE WS-CODIGO(1:2) TO WS-CATEGORIA
+           Expect WS-CATEGORIA to be "EL"

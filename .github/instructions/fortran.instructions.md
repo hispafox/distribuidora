@@ -1,0 +1,11 @@
+---
+applyTo: "**/*.f90"
+---
+- gfortran, formato libre (Fortran 90+).
+- `implicit none` al inicio de cada program, module, subroutine y function. Sin excepciones.
+- Las constantes (tarifas, DIVISOR_VOLUM) van en el módulo `tarifas`. No incrustar valores numéricos en el código principal.
+- Si añades un tramo de tarifa: actualiza el módulo `tarifas` y añade el `else if` en la función `coste_envio`.
+- Nombres de variable en minúsculas con guiones bajos.
+- El control de errores devuelve un código de estado entero cuando aplique; no usar `stop` en rutinas de cálculo.
+- Formato de salida: `F8.2` para importes en EUR, `F8.3` para pesos en kg.
+- Compilar con: gfortran -o coste_envio coste_envio.f90
