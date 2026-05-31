@@ -1,13 +1,8 @@
 """
-Pedidos del día — distribuidora. (ESTADO BASE, cap-01 a cap-08)
+Pedidos del día — distribuidora.
 
 Carga un CSV con columnas: fecha, producto, categoria, cantidad, precio_unitario
-Genera estadísticas: total de ventas y ventas por categoría.
-
-NOTA: esta es la versión de partida del proyecto. El "importe medio por unidad
-y categoría" NO está todavía — es la mejora que el equipo de agentes añade en M9
-(rama cap-09/complete). Compara este fichero con distribuidora/python/pedidos.py
-para ver exactamente qué añadió el flujo E2E.
+Genera estadísticas: total de ventas, ventas por categoría, media de importe por unidad y categoría.
 """
 
 import csv
@@ -36,13 +31,21 @@ def calcular_estadisticas(pedidos: list[dict]) -> dict:
     total_ventas = sum(p['cantidad'] * p['precio_unitario'] for p in pedidos)
 
     ventas_por_categoria: dict[str, float] = defaultdict(float)
+    unidades_por_categoria: dict[str, int] = defaultdict(int)
     for p in pedidos:
         importe = p['cantidad'] * p['precio_unitario']
         ventas_por_categoria[p['categoria']] += importe
+        unidades_por_categoria[p['categoria']] += p['cantidad']
+
+    media_por_categoria = {
+        cat: ventas_por_categoria[cat] / unidades_por_categoria[cat]
+        for cat in ventas_por_categoria
+    }
 
     return {
         'total_ventas': round(total_ventas, 2),
         'ventas_por_categoria': {k: round(v, 2) for k, v in ventas_por_categoria.items()},
+        'media_importe_por_unidad_categoria': {k: round(v, 2) for k, v in media_por_categoria.items()},
     }
 
 
@@ -54,7 +57,8 @@ def main() -> None:
     print(f"Total ventas: {stats['total_ventas']} EUR")
     print("Ventas por categoria:")
     for cat, total in sorted(stats['ventas_por_categoria'].items()):
-        print(f"  {cat}: {total} EUR")
+        media = stats['media_importe_por_unidad_categoria'][cat]
+        print(f"  {cat}: {total} EUR  (media/unidad: {media} EUR)")
 
 
 if __name__ == '__main__':
