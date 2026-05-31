@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# FORTRAN (módulos y binarios de compilación)
+*.mod
+*.o
+*.smod
+
+# Binarios compilados
+*.exe
+coste_envio
+test_coste
+inventario
+
+# Carpeta temporal de verificación
+.build-check/

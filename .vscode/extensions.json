@@ -1,0 +1,13 @@
+{
+  // Extensiones recomendadas para el repo distribuidora (DEVCOP).
+  // VS Code las ofrece al abrir el proyecto: Ctrl+Mayús+P → "Extensions: Show Recommended Extensions".
+  // Detalle de cada una en docs/EXTENSIONES-VSCODE.md
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "fortran-lang.linter-gfortran",
+    "bitlang.cobol",
+    "github.copilot",
+    "github.copilot-chat"
+  ]
+}
