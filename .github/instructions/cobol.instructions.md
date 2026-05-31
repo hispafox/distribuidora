@@ -1,0 +1,11 @@
+---
+applyTo: "**/*.cob"
+---
+- GnuCOBOL, formato fijo. Sentencias en columna 12+ (Area B).
+- Nombres de campo en MAYÚSCULAS con guiones (ej: WS-COD-PRODUCTO, RI-PRECIO).
+- Código de producto: 6 caracteres; posiciones 1-2 = categoría.
+- No usar GO TO en código nuevo.
+- No cambiar el tamaño ni el orden de los campos de REGISTRO-INV.
+- Variables de trabajo con prefijo WS-. Control de fin de fichero con WS-EOF ('N'/'S').
+- El control de errores se hace con flags WS- en WORKING-STORAGE, no parando la ejecución.
+- Compilar con: cobc -x -o inventario inventario.cob
